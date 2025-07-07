@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ege Asistan V1000000</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg-light: #f5f7fa;
+    --bg-dark: #121212;
+    --card-bg-light: rgba(255,255,255,0.9);
+    --card-bg-dark: rgba(30,30,30,0.9);
+    --primary: #29f;
+    --accent: #0f0;
+    --error: #e63946;
+    --text-light: #333;
+    --text-dark: #ddd;
+    --radius:16px;
+    --shadow:0 10px 30px rgba(0,0,0,0.1);
+    --transition:.3s ease;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',sans-serif;
+    background:url('https://i.imgur.com/VCgd8jv.jpeg')center/cover fixed;
+    display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden;
+    transition:background var(--transition),color var(--transition);
+    color:var(--text-light);
+  }
+  body.dark{background:var(--bg-dark);color:var(--text-dark)}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:-1}
+  .container{
+    background:var(--card-bg-light);backdrop-filter:blur(12px);
+    border-radius:var(--radius);box-shadow:var(--shadow);
+    max-width:500px;width:90%;padding:40px;text-align:center;
+    position:relative;transition:background var(--transition),color var(--transition);
+    z-index:10;
+  }
+  body.dark .container{background:var(--card-bg-dark)}
+  h1{color:var(--primary);font-size:32px;font-weight:600;margin-bottom:15px}
+  p{font-size:18px;margin-bottom:25px}
+  input[type="password"],input.command{
+    width:100%;padding:15px;font-size:16px;margin-top:15px;
+    border:2px solid #ccc;border-radius:12px;
+    background:inherit;color:inherit;
+    transition:border-color var(--transition);
+    font-weight:600;
+  }
+  input:focus{border-color:var(--primary)}
+  button, .neon-btn{
+    margin-top:20px;padding:15px 40px;
+    font-size:17px;font-weight:700;color:#fff;
+    background:var(--primary);border:none;border-radius:12px;
+    cursor:pointer;transition:box-shadow var(--transition),background var(--transition);
+  }
+  button:hover,.neon-btn:hover{background:#0077dd;box-shadow:0 0 15px var(--primary)}
+  .neon-btn{
+    background:transparent;color:var(--accent);
+    text-shadow:0 0 8px var(--accent),0 0 16px var(--accent);
+    border:2px solid var(--accent);
+  }
+  .neon-btn:hover{
+    background:var(--accent);color:#000;
+    box-shadow:0 0 20px var(--accent),inset 0 0 10px #fff;
+  }
+  .error{color:var(--error);margin-top:15px;font-weight:700;animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+  .hidden{display:none}
+  .success{font-size:72px;color:var(--accent);animation:pop .6s;opacity:0}
+  @keyframes pop{to{transform:scale(1);opacity:1}from{transform:scale(0);opacity:0}}
+  .panel{display:none;flex-direction:column;align-items:center;position:relative}
+  .whatsapp-btn{display:inline-block;margin-top:20px;background:var(--accent);color:#000;
+    padding:18px 44px;font-weight:700;border-radius:14px;text-decoration:none;
+    font-size:18px;box-shadow:0 8px 20px rgba(0,255,0,0.5);transition:box-shadow .3s;
+  }
+  .whatsapp-btn:hover{box-shadow:0 0 30px rgba(0,255,0,0.7)}
+  .dark-mode-toggle{
+    position:fixed;top:16px;right:16px;background:transparent;
+    border:none;cursor:pointer;font-size:26px;color:var(--primary);
+    transition:color var(--transition);z-index:1001;
+  }
+  body.dark .dark-mode-toggle{color:var(--accent)}
+  #qr-container{margin-top:30px}
+  .notification{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--primary);color:#fff;padding:16px 30px;border-radius:30px;
+    font-weight:700;box-shadow:0 5px 15px rgba(0,0,0,.2);
+    opacity:0;pointer-events:none;transition:opacity .4s;z-index:1002;
+  }
+  .notification.show{opacity:1;pointer-events:auto}
+  /* Gizli komut kutusu */
+  .command-box{margin-top:20px;display:none;width:100%;}
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+<button class="dark-mode-toggle" title="Gece Modu">🌙</button>
+
+<div class="container" id="loginContainer">
+  <h1>🔐 Gizli Giriş</h1>
+  <p>Devam etmek için şifreni gir:</p>
+  <input type="password" id="passwordInput" placeholder="Şifre" autocomplete="off"/>
+  <button id="loginBtn">Giriş Yap</button>
+  <div class="error" id="errorBox" role="alert" aria-live="assertive"></div>
+</div>
+
+<div class="container panel" id="panelContainer">
+  <div class="success" id="successIcon">✅</div>
+  <h1>Hoş geldin Ege ❤️</h1>
+  <p>Bot hazır. “Selam” yaz…</p>
+  <a class="neon-btn whatsapp-btn" id="waBtn" href="#" target="_blank">📩 Selam Gönder</a>
+  <div id="qr-container" title="Telefonla okut"></div>
+  <div class="command-box" id="cmdBox">
+    <input class="command" id="cmdInput" placeholder="Komut yaz…" autocomplete="off"/>
+    <button class="neon-btn" id="cmdBtn">Gönder</button>
+  </div>
+  <footer style="margin-top:30px;font-size:13px;color:#ccc;">V1000000 • © 2025 Ege</footer>
+</div>
+
+<div class="notification" id="notif"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+  const correctPassword="x";
+  const maxAttempts=3;
+  let attempts=Number(localStorage.getItem("loginAttempts"))||0;
+  let sessionActive=sessionStorage.getItem("sessionActive")==="true";
+
+  const loginDiv = document.getElementById("loginContainer");
+  const panelDiv = document.getElementById("panelContainer");
+  const pwInput = document.getElementById("passwordInput");
+  const loginBtn = document.getElementById("loginBtn");
+  const errorBox = document.getElementById("errorBox");
+  const notif = document.getElementById("notif");
+  const successIcon = document.getElementById("successIcon");
+  const waBtn = document.getElementById("waBtn");
+  const qrContainer = document.getElementById("qr-container");
+  const darkToggle = document.querySelector(".dark-mode-toggle");
+  const cmdBox = document.getElementById("cmdBox");
+  const cmdInput = document.getElementById("cmdInput");
+  const cmdBtn = document.getElementById("cmdBtn");
+
+  darkToggle.onclick = ()=>{
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",document.body.classList.contains("dark")?"dark":"light");
+  };
+
+  function showNotification(msg){
+    notif.textContent=msg;notif.classList.add("show");
+    setTimeout(()=>notif.classList.remove("show"),3500);
+  }
+
+  function lockOut(){
+    loginDiv.innerHTML=`<h1>⛔ Erişim Engellendi</h1><p>3 kez yanlış şifre girildi.<br>Sayfayı yenile.</p>`;
+    localStorage.setItem("loginAttempts",maxAttempts);
+  }
+
+  function generateQR(){
+    const link="https://wa.me/447846848820?text=selam";
+    QRCode.toCanvas(link,{width:180},(e,can)=>{
+      if(e)console.error(e);
+      qrContainer.appendChild(can);
+    });
+    waBtn.href=link;
+  }
+
+  function showPanel(){
+    loginDiv.style.display="none";panelDiv.style.display="flex";
+    successIcon.style.animation="pop .6s";
+    generateQR();
+    sessionStorage.setItem("sessionActive","true");
+    showNotification('Bot hazır! "selam" yazınca konuşur.');
+    cmdBox.style.display="block";
+  }
+
+  async function checkPw(){
+    if(attempts>=maxAttempts)return lockOut();
+    const v=pwInput.value.trim();
+    if(v===correctPassword){
+      localStorage.setItem("loginAttempts",0);
+      attempts=0;
+      showPanel();
+    } else {
+      attempts++;localStorage.setItem("loginAttempts",attempts);
+      errorBox.textContent=`❌ Yanlış şifre. Kalan: ${maxAttempts-attempts}`;
+      errorBox.style.display="block";
+      setTimeout(()=>errorBox.style.display="none",3000);
+      if(attempts>=maxAttempts)lockOut();
+    }
+    pwInput.value="";pwInput.focus();
+  }
+  loginBtn.onclick=checkPw;
+  pwInput.addEventListener("keypress",e=>{if(e.key==="Enter")checkPw();});
+
+  cmdBtn.onclick=()=>{
+    const c=cmdInput.value.trim().toLowerCase();
+    if(c==="")return;
+    let res;
+    if(c==="egeyle görüş")res="Tamam Ege'yle görüşüyorum...";
+    else if(c==="farklı bir konu")res="Tabii, başka bir konuyu konuşabiliriz.";
+    else if(c==="bilgi al")res="Elbette, ne hakkında bilgi istersin?";
+    else res="Komut tanınmadı 😕";
+    showNotification(res);
+    cmdInput.value="";
+  };
+
+  window.onload=()=>{
+    if(localStorage.getItem("loginAttempts")>=maxAttempts)lockOut();
+    const theme=localStorage.getItem("theme");
+    if(theme==="dark"||(!theme&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+      document.body.classList.add("dark");
+    }
+    if(sessionActive)showPanel();
+  };
+</script>
+</body>
+</html>
