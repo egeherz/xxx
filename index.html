@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ege Can - Canlı Destek</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+  :root {
+    --primary-color: #0077ff;
+    --background: #0f172a;
+    --panel-bg: rgba(15, 23, 42, 0.95);
+    --bot-bg: #1e40af;
+    --user-bg: #2563eb;
+    --button-bg: #2563eb;
+    --button-hover-bg: #3b82f6;
+    --text-color: #e0e7ff;
+    --accent-color: #60a5fa;
+    --error-color: #f87171;
+    --success-color: #34d399;
+    --radius: 18px;
+    --shadow: 0 12px 28px rgba(0,0,0,0.8);
+    --transition: 0.3s ease;
+    --font-family: 'Inter', sans-serif;
+  }
+
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: var(--font-family);
+  }
+
+  body {
+    background: var(--background);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('https://i.imgur.com/VCgd8jv.jpeg') center/cover no-repeat fixed;
+    filter: brightness(0.28);
+    z-index: -2;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    backdrop-filter: blur(16px);
+    z-index: -1;
+  }
+
+  #panel {
+    width: 380px;
+    max-width: 95vw;
+    height: 540px;
+    background: var(--panel-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 24px 110px;
+    user-select: auto;
+    position: relative;
+  }
+
+  #panel header {
+    font-weight: 700;
+    font-size: 26px;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 24px;
+    user-select: none;
+    text-shadow: 0 0 8px var(--primary-color);
+  }
+
+  #messages {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+  }
+  #messages::-webkit-scrollbar {
+    width: 8px;
+  }
+  #messages::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  #messages::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+  }
+
+  .message {
+    max-width: 80%;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    border-radius: var(--radius);
+    font-size: 16px;
+    line-height: 1.4;
+    user-select: text;
+    word-break: break-word;
+    box-shadow: 0 3px 16px rgba(0,0,0,0.3);
+    position: relative;
+  }
+
+  .bot {
+    background: var(--bot-bg);
+    color: #fff;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    animation: fadeInUp 0.3s ease forwards;
+  }
+
+  .user {
+    background: var(--user-bg);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    animation: fadeInUp 0.3s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #buttonsContainer {
+    position: absolute;
+    bottom: 70px;
+    width: calc(100% - 48px);
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  #buttonsContainer button {
+    flex: 1;
+    background: var(--button-bg);
+    border: none;
+    padding: 16px 12px;
+    border-radius: var(--radius);
+    font-weight: 700;
+    font-size: 15px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.35);
+    transition: background var(--transition);
+    user-select: none;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+  }
+
+  #buttonsContainer button:hover {
+    background: var(--button-hover-bg);
+  }
+
+  #whatsAppBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #25D366;
+    border: none;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.7);
+    font-size: 32px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  #whatsAppBtn:hover {
+    background: #128C3E;
+  }
+
+  #reportBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 100px;
+    background: #ef4444;
+    border: none;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.7);
+    font-size: 28px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  #reportBtn:hover {
+    background: #b91c1c;
+  }
+
+  #panelFooter {
+    position: absolute;
+    bottom: 18px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #a5b4fccc;
+    user-select: none;
+  }
+
+  /* Modal Styles */
+  #modalOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.85);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #modalOverlay.active {
+    display: flex;
+  }
+
+  #modal {
+    background: var(--panel-bg);
+    border-radius: var(--radius);
+    width: 320px;
+    max-width: 90vw;
+    padding: 24px 28px 28px;
+    box-shadow: var(--shadow);
+    color: var(--text-color);
+    user-select: auto;
+    position: relative;
+  }
+
+  #modal h3 {
+    margin-bottom: 18px;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--primary-color);
+    text-align: center;
+  }
+
+  #modal label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  #modal textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 90px;
+    border-radius: var(--radius);
+    border: none;
+    padding: 12px 15px;
+    font-size: 15px;
+    font-family: var(--font-family);
+    margin-bottom: 18px;
+    outline: none;
+  }
+
+  #modalButtons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #modalButtons button {
+    flex: 1;
+    padding: 12px 0;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition);
+  }
+
+  #modalButtons button:first-child {
+    background: var(--error-color);
+    color: white;
+    margin-right: 16px;
+  }
+  #modalButtons button:first-child:hover {
+    background: #b91c1c;
+  }
+
+  #modalButtons button:last-child {
+    background: var(--success-color);
+    color: white;
+  }
+  #modalButtons button:last-child:hover {
+    background: #059669;
+  }
+
+  /* Responsive */
+  @media (max-width: 400px) {
+    #panel {
+      height: 480px;
+      width: 95vw;
+      padding-bottom: 130px;
+    }
+    #buttonsContainer {
+      bottom: 90px;
+    }
+    #whatsAppBtn, #reportBtn {
+      width: 54px;
+      height: 54px;
+      font-size: 24px;
+      bottom: 20px;
+    }
+    #whatsAppBtn {
+      right: 20px;
+    }
+    #reportBtn {
+      right: 90px;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <main id="panel" role="region" aria-label="Canlı Destek Paneli" aria-live="polite">
+
+    <header>🤖 Canlı Destek</header>
+
+    <section id="messages" aria-live="polite" aria-atomic="false" aria-relevant="additions" tabindex="0"></section>
+
+    <nav id="buttonsContainer" aria-label="Konuşma seçenekleri">
+      <button data-msg="ege">Ege ile iletişime geçmek için WhatsApp'ı kullanabilirsin.</button>
+      <button data-msg="yardim">Yardım almak istiyorum.</button>
+      <button data-msg="farkli">Farklı bir konu hakkında konuşmak istiyorum.</button>
+    </nav>
+
+    <footer id="panelFooter">© Ege Can 2025</footer>
+  </main>
+
+  <button id="whatsAppBtn" aria-label="WhatsApp ile iletişime geç" title="WhatsApp">📱</button>
+  <button id="reportBtn" aria-label="Sorun Bildir" title="Sorun Bildir">⚠️</button>
+
+  <!-- Modal -->
+  <div id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc">
+    <div id="modal">
+      <h3 id="modalTitle">Sorun Bildir</h3>
+      <label for="issueText">Yaşadığınız sorunu kısaca anlatın:</label>
+      <textarea id="issueText" placeholder="Buraya yazabilirsiniz..." rows="4"></textarea>
+      <div id="modalButtons">
+        <button id="cancelBtn" type="button">İptal</button>
+        <button id="sendBtn" type="button">Gönder</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  (function(){
+    const messagesEl = document.getElementById('messages');
+    const buttonsContainer = document.getElementById('buttonsContainer');
+    const whatsAppBtn = document.getElementById('whatsAppBtn');
+    const reportBtn = document.getElementById('reportBtn');
+
+    const modalOverlay = document.getElementById('modalOverlay');
+    const issueText = document.getElementById('issueText');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const phoneNumber = '447846848820';
+    const mailAddress = 'contact@egeherz.com';
+    const waBaseUrl = 'https://wa.me/';
+
+    const replies = {
+      ege: [
+        "Tabii, Ege ile iletişim için WhatsApp butonuna tıklaman yeterli 👍",
+        "Sana direkt WhatsApp'tan bağlanabilirsin. Yardımcı olmamı istediğin başka bir şey var mı?"
+      ],
+      yardim: [
+        "Elbette, nasıl yardımcı olabilirim?",
+        "Sorununu anlat, elimden geldiğince destek olmaya çalışırım."
+      ],
+      farkli: [
+        "Tamam, farklı bir konuda konuşalım.",
+        "Sormak istediğin başka bir şey varsa çekinmeden sorabilirsin."
+      ],
+      default: [
+        "Üzgünüm, bunu anlayamadım ama elimden geldiğince yardımcı olmaya çalışırım."
+      ]
+    };
+
+    function addMessage(text, sender='bot') {
+      const div = document.createElement('div');
+      div.classList.add('message', sender);
+      div.textContent = text;
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function sendReply(key) {
+      const answers = replies[key] || replies.default;
+      let delay = 500;
+      answers.forEach((msg, i) => {
+        setTimeout(() => addMessage(msg, 'bot'), delay * (i+1));
+      });
+    }
+
+    // İlk mesaj
+    addMessage("Merhaba! Canlı destek için aşağıdaki seçeneklerden birine tıklayabilirsin.", 'bot');
+
+    buttonsContainer.addEventListener('click', e => {
+      if(e.target.tagName.toLowerCase() === 'button') {
+        const key = e.target.getAttribute('data-msg');
+        const userText = e.target.textContent.trim();
+        addMessage(userText, 'user');
+        sendReply(key);
+      }
+    });
+
+    whatsAppBtn.addEventListener('click', () => {
+      window.open(`${waBaseUrl}${phoneNumber}?text=selam`, '_blank');
+    });
+
+    reportBtn.addEventListener('click', () => {
+      issueText.value = '';
+      modalOverlay.classList.add('active');
+      issueText.focus();
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('active');
+    });
+
+    sendBtn.addEventListener('click', () => {
+      const issue = issueText.value.trim();
+      if(issue.length < 10){
+        alert('Lütfen en az 10 karakterlik bir sorun açıklaması yazınız.');
+        issueText.focus();
+        return;
+      }
+      const subject = encodeURIComponent("Web Panel Sorun Bildirimi");
+      const body = encodeURIComponent(issue);
+      const mailtoLink = `mailto:${mailAddress}?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+      modalOverlay.classList.remove('active');
+    });
+
+  })();
+</script>
+
+</body>
+</html>
