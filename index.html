@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gizli Giriş - V10000</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f2f4f7;
+      --card-bg: #ffffff;
+      --primary: #0077cc;
+      --accent: #25D366;
+      --text: #333;
+      --error: #e63946;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .login-box, .panel {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      display: none;
+      transition: all 0.4s ease;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    input {
+      padding: 14px;
+      width: 100%;
+      font-size: 16px;
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 14px 30px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background: #005fa3;
+    }
+
+    .error {
+      color: var(--error);
+      margin-top: 15px;
+      font-weight: bold;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
+
+    .success-emoji {
+      font-size: 64px;
+      margin-bottom: 20px;
+      animation: pop 0.6s ease forwards;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    a.button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 14px 30px;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 13px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box" id="loginBox">
+    <h1>Gizli Giriş</h1>
+    <p>Devam etmek için şifreni gir:</p>
+    <input type="password" id="passwordInput" placeholder="Şifre">
+    <button onclick="checkPassword()">Giriş Yap</button>
+    <div class="error" id="errorBox" style="display:none;"></div>
+  </div>
+
+  <div class="panel" id="mainPanel">
+    <div class="success-emoji">✅</div>
+    <h1>Hoş geldin</h1>
+    <p>Asistan hazır, WhatsApp üzerinden seni bekliyor!</p>
+    <a class="button" href="https://wa.me/447846848820?text=selam" target="_blank">📩 Selam Gönder</a>
+    <footer>V10000 • © 2025 Ege</footer>
+  </div>
+
+  <script>
+    const correctPassword = "x";
+    const maxAttempts = 3;
+
+    const loginBox = document.getElementById("loginBox");
+    const mainPanel = document.getElementById("mainPanel");
+    const errorBox = document.getElementById("errorBox");
+
+    let attempts = localStorage.getItem("loginAttempts") || 0;
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+
+      if (attempts >= maxAttempts) {
+        errorBox.style.display = "block";
+        errorBox.innerText = "⛔ Giriş kilitlendi. Sayfayı yenileyin.";
+        return;
+      }
+
+      if (input === correctPassword) {
+        localStorage.setItem("loginAttempts", 0);
+        loginBox.style.display = "none";
+        mainPanel.style.display = "block";
+      } else {
+        attempts++;
+        localStorage.setItem("loginAttempts", attempts);
+        errorBox.style.display = "block";
+        errorBox.innerText = `❌ Şifre yanlış. Kalan hakkın: ${maxAttempts - attempts}`;
+      }
+    }
+
+    window.onload = () => {
+      if (attempts >= maxAttempts) {
+        loginBox.innerHTML = "<h1>⛔ Erişim Engellendi</h1><p>3 kez yanlış şifre girildi. Sayfayı yenilemen gerek.</p>";
+      } else {
+        loginBox.style.display = "block";
+      }
+    };
+  </script>
+
+</body>
+</html>
