@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok Video İndir</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: url('https://i.imgur.com/S95JAKZ.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 0;
+    }
+
+    h1, p {
+      position: relative;
+      z-index: 1;
+      color: #fff;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input {
+      padding: 12px 16px;
+      width: 300px;
+      border: none;
+      border-radius: 999px;
+      outline: none;
+      font-size: 16px;
+      margin-bottom: 15px;
+      backdrop-filter: blur(5px);
+    }
+
+    button {
+      padding: 12px 24px;
+      background: #ff0050;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: #ff3369;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    #result {
+      margin-top: 20px;
+      color: #fff;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    a.download-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #1db954;
+      color: #fff;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a.download-btn:hover {
+      transform: scale(1.05);
+      background: #22e065;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎵 TikTok Video İndirici</h1>
+  <p>TikTok video linkini yapıştır ve indir</p>
+
+  <div class="container">
+    <input type="text" id="videoUrl" placeholder="https://www.tiktok.com/...">
+    <button onclick="downloadVideo()">İndir</button>
+    <div id="result"></div>
+  </div>
+
+  <footer>© 2025 Ege Deniz. All rights reserved.</footer>
+
+  <script>
+    async function downloadVideo() {
+      const url = document.getElementById('videoUrl').value.trim();
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = "⏳ İşleniyor...";
+
+      if (!url) {
+        resultDiv.innerHTML = "⚠️ Lütfen geçerli bir TikTok linki gir.";
+        return;
+      }
+
+      try {
+        const apiUrl = `https://api.videodownloaderpro.com/tiktok?url=${encodeURIComponent(url)}`;
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        if (data && data.video && data.video.noWatermark) {
+          resultDiv.innerHTML = `
+            ✅ Video hazır!<br>
+            <a class="download-btn" href="${data.video.noWatermark}" target="_blank">💾 Videoyu İndir</a>
+          `;
+        } else {
+          resultDiv.innerHTML = "❌ Video bulunamadı veya API hatası.";
+        }
+      } catch (error) {
+        console.error(error);
+        resultDiv.innerHTML = "⚠️ Bir hata oluştu, tekrar deneyin.";
+      }
+    }
+  </script>
+</body>
+</html>
