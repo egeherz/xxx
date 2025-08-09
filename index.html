@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikTok İndirici</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing:border-box; font-family:'Poppins',sans-serif; margin:0; padding:0; }
+    body {
+      min-height:100vh; background:linear-gradient(180deg, #0b62a8, #023e6b);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      color:#fff; padding:24px;
+    }
+    .card {
+      background:rgba(255,255,255,0.05); border-radius:16px;
+      backdrop-filter:blur(6px); padding:28px;
+      max-width:600px; width:100%; text-align:center;
+    }
+    .card h1 { font-size:24px; margin-bottom:10px; }
+    .card p { margin-bottom:20px; opacity:0.9; }
+    input {
+      width:100%; padding:12px 16px; font-size:15px;
+      border:none; border-radius:999px; outline:none; margin-bottom:12px;
+    }
+    button {
+      padding:12px 20px; border:none; border-radius:999px;
+      background:linear-gradient(90deg,#ff416c,#ff4b2b); color:#fff;
+      font-weight:600; cursor:pointer; transition:transform .15s, box-shadow .15s;
+    }
+    button:hover { box-shadow:0 8px 20px rgba(0,0,0,0.35); }
+    button:active { transform:scale(0.97); }
+    .links { margin-top:20px; display:flex; flex-direction:column; gap:8px; }
+    .dl-btn {
+      display:flex; align-items:center; justify-content:center;
+      gap:8px; padding:10px; border-radius:12px;
+      text-decoration:none; color:#fff; transition:transform .15s;
+    }
+    .dl-btn:hover { transform:translateY(-4px); }
+    .tiktok { background:#000; }
+    .spotify { background:#1DB954; }
+    .instagram { background:linear-gradient(45deg,#feda75,#d62976,#962fbf,#4f5bd5); }
+    .telegram { background:#229ED9; }
+    .status { margin-top:10px; opacity:0.9; font-size:14px; }
+    .spinner {
+      display:inline-block; width:18px; height:18px;
+      border:3px solid rgba(255,255,255,0.3);
+      border-top-color:#fff; border-radius:50%;
+      animation:spin 1s linear infinite;
+      vertical-align:middle;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>TikTok Video İndirici</h1>
+    <p>Link yapıştır → filigranlı / filigransız seçenek çıkacak</p>
+    <input id="url" placeholder="TikTok video URL’si" />
+    <button id="go">İndir</button>
+    <div id="status" class="status">Bekleniyor...</div>
+    <div id="result" class="links"></div>
+  </div>
+
+  <script>
+    const inp = document.getElementById('url');
+    const btn = document.getElementById('go');
+    const status = document.getElementById('status');
+    const result = document.getElementById('result');
+
+    btn.onclick = async () => {
+      result.innerHTML = '';
+      const u = inp.value.trim();
+      if (!u) { status.innerText = 'Geçerli bir URL gir!'; return; }
+      status.innerHTML = '<span class="spinner"></span> İşleniyor...';
+      btn.disabled = true;
+
+      try {
+        const api = `https://tikfetch.xyz/download?url=${encodeURIComponent(u)}`;
+        const res = await fetch(api);
+        const j = await res.json();
+        if (res.ok && (j.watermark || j.noWatermark)) {
+          status.innerText = 'Video hazır, aşağıdan indir.';
+          
+          if (j.noWatermark) {
+            const a = document.createElement('a');
+            a.href = j.noWatermark; a.target='_blank'; a.className='dl-btn spotify';
+            a.innerText = 'Filigransız İndir';
+            result.appendChild(a);
+          }
+
+          if (j.watermark) {
+            const b = document.createElement('a');
+            b.href = j.watermark; b.target='_blank'; b.className='dl-btn tiktok';
+            b.innerText = 'Filigranlı İndir';
+            result.appendChild(b);
+          }
+        } else {
+          status.innerText = 'Video bulunamadı veya servis hatası.';
+        }
+      } catch(err) {
+        console.error(err);
+        status.innerText = 'Hata oluştu, tekrar deneyin.';
+      } finally {
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>
